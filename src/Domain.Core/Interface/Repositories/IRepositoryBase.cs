@@ -10,9 +10,9 @@ namespace Domain.Core.Interface.Repositories
         Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate);
         Task<T> AddAsync(T entity);
         Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities);
-        Task RemoveAsync(T entity);
-        Task RemoveRangeAsync(IEnumerable<T> entities);
-        Task UpdateAsync(T entity);
+        Task<bool> RemoveAsync(T entity);
+        Task<bool> RemoveRangeAsync(IEnumerable<T> entities);
+        Task<T> UpdateAsync(T entity);
 
     }
 }

@@ -18,7 +18,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 await _context.AddAsync(entity);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return entity;
             }
             catch (Exception ex) 
@@ -32,7 +32,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 await _context.AddRangeAsync(entities);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return entities;
             }
             catch (Exception ex)
@@ -81,12 +81,13 @@ namespace Infrastructure.Data.Repositories
             
         }
 
-        public Task RemoveAsync(T entity)
+        public async Task<bool> RemoveAsync(T entity)
         {
             try
             {
                 _context.Set<T>().RemoveRange(entity);
-                return Task.CompletedTask;
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
@@ -94,12 +95,13 @@ namespace Infrastructure.Data.Repositories
             }
         }
 
-        public Task RemoveRangeAsync(IEnumerable<T> entities)
+        public async Task<bool> RemoveRangeAsync(IEnumerable<T> entities)
         {
             try
             {
                 _context.Set<T>().RemoveRange(entities);
-                return Task.CompletedTask;
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch(Exception ex)
             {
@@ -119,12 +121,13 @@ namespace Infrastructure.Data.Repositories
             }
         }
 
-        public Task UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             try
             {
                 _context.Set<T>().Update(entity);
-                return Task.CompletedTask;
+                await _context.SaveChangesAsync();
+                return entity;
             }
             catch(Exception ex)
             {
