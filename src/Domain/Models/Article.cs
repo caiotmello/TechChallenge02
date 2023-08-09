@@ -1,7 +1,4 @@
-﻿using System.ComponentModel;
-using System.Net;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Article
     {
