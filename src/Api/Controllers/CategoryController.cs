@@ -1,6 +1,7 @@
 ﻿using Application.Dtos;
 using Application.Services;
 using Application.Services.Interface;
+using Domain.Validations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -19,11 +20,20 @@ namespace Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] CreateCategoryDto categoryDto)
         {
-            var result = await _categoryService.CreateCategoryAsync(categoryDto);
-            if(result.IsSuccess)
-                return Ok(result);
+            try
+            {
+                var result = await _categoryService.CreateCategoryAsync(categoryDto);
+                if (result.IsSuccess)
+                    return Ok(result);
+
+                return BadRequest(result);
+            }
+            catch (DomainValidationException ex)
+            {
+                var result = ResultService.Fail(ex.Message);
+                return BadRequest(result);
+            }
             
-            return BadRequest(result);
         }
 
         [HttpGet]

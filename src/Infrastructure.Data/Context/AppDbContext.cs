@@ -21,7 +21,18 @@ namespace Infrastructure.Data.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+
+            builder.Entity<Article>()
+                .HasOne(article => article.Author)
+                .WithMany(author => author.Articles)
+                .HasForeignKey(article => article.AuthorId);
+
+            builder.Entity<Article>()
+                .HasOne(article => article.Category)
+                .WithMany(category => category.Articles)
+                .HasForeignKey(article => article.CategoryId);
+
+            //base.OnModelCreating(builder);
         }
     }
 }

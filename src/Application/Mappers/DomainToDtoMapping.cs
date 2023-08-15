@@ -15,7 +15,9 @@ namespace Application.Mappers
 
         private void MappingArticle()
         {
-            CreateMap<Article, ReadArticleDto>();
+            CreateMap<Article, ReadArticleDto>()
+                .ForMember(dest => dest.Author, opt => opt.MapFrom(article => article.Author))
+                .ForMember(dest => dest.Category, opt => opt.MapFrom(article => article.Category));
         }
 
         private void MappingAuthor()

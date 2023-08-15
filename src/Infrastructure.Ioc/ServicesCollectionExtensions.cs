@@ -17,16 +17,14 @@ namespace Infrastructure.CrossCutting.Ioc
         public static IServiceCollection AddSqlDb(this IServiceCollection servicesCollection, IConfiguration config)
         {
             servicesCollection.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("SqlConnection")));
+            options.UseLazyLoadingProxies().UseSqlServer(config.GetConnectionString("SqlConnection")));
+            //options.UseSqlServer(config.GetConnectionString("SqlConnection")));
 
             return servicesCollection;
         }
 
         public static IServiceCollection AddServices(this IServiceCollection servicesCollection)
         {
-            //servicesCollection.TryAddSingleton(AppDomain.CurrentDomain.GetAssemblies());
-            //servicesCollection.AddAutoMapper(typeof(DtoToModelMappingArticle));
-            //servicesCollection.AddAutoMapper(typeof(DtoToModelMappingAuthor));
             servicesCollection.AddAutoMapper(typeof(DtoToDomainMapping));
 
             servicesCollection.TryAddScoped<IArticleService, ArticleService>();

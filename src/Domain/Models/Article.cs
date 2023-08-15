@@ -1,18 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography.X509Certificates;
+﻿using Domain.Validations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models
 {
     public class Article
     {
         [Key]
-        [Required]
         public int Id { get; set; }
 
-        [Required]
         public string Title { get; set; }
 
-        [Required]
         public string Content { get; set; }
 
         public DateTime PublishedDate { get; set; }
@@ -23,6 +20,26 @@ namespace Domain.Models
 
         public int CategoryId { get; set; }
         public virtual Category Category { get; set; }
+
+        public Article(string title, string content,int authorId, int categoryId) 
+        {
+            Title = title;
+            Content = content;
+            AuthorId = authorId;
+            CategoryId = categoryId;
+            PublishedDate = DateTime.Now;
+            ModifiedDate = PublishedDate;
+            ValidateEntity();
+        }
+
+        public void ValidateEntity()
+        {
+            AssertionConcern.AssertArgumentFalse(string.IsNullOrEmpty(Title), "Name must be informed!");
+            AssertionConcern.AssertArgumentFalse(string.IsNullOrEmpty(Content), "Content must be informed!");
+            AssertionConcern.AssertArgumentFalse(AuthorId <= 0 , "Author Id must be informed!");
+            AssertionConcern.AssertArgumentFalse(CategoryId <= 0, "Category Id must be informed!");
+            
+        }
 
     }
 }
