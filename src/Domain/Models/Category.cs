@@ -11,6 +11,8 @@ namespace Domain.Models
         [Required]
         public string Name { get; set; }
 
-        public virtual List<Article> Articles { get; set; }
+        public string Description { get; set; }
+
+        public virtual ICollection<Article> Articles { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using Infrastructure.CrossCutting.Ioc;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,14 @@ builder.Services.AddSwaggerGen();
 // Project Specific services
 builder.Services.AddSqlDb(builder.Configuration);
 builder.Services.AddRepositories();
+builder.Services.AddServices();
 
+
+//To not return null on json
+builder.Services.AddMvc().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+});
 
 var app = builder.Build();
 

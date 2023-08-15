@@ -15,7 +15,6 @@ namespace Domain.Models
         [Required]
         public string Content { get; set; }
 
-        [Required]
         public DateTime PublishedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
