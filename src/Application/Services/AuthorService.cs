@@ -1,9 +1,10 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Request;
+using Application.Dtos.Response;
+using Application.Dtos.Validations;
 using Application.Services.Interface;
 using AutoMapper;
 using Domain.Interfaces.Repositories;
 using Domain.Models;
-using System.ComponentModel.DataAnnotations;
 
 namespace Application.Services
 {
@@ -18,20 +19,20 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ResultService<ReadAuthorDto>> CreateAuthorAsync(CreateAuthorDto authorDto)
+        public async Task<ResultService<ReadAuthorResponseDto>> CreateAuthorAsync(CreateAuthorRequestDto authorDto)
         {
 
             if (authorDto == null)
-                return ResultService.Fail<ReadAuthorDto>("The Object is null");
+                return ResultService.Fail<ReadAuthorResponseDto>("The Object is null");
 
             // Validar o DTO usando as Data Annotations
-            //var result = new AuthorDtoValidator.Validate(authorDto);
-            //if (!result.IsValid)
-            //    return ResultService.RequestError<ReadArticleDto>("Validation Problem!",result);
+            var validation = new CreateAuthorRequestDtoValidator().Validate(authorDto);
+            if (!validation.IsValid)
+                return ResultService.RequestError<ReadAuthorResponseDto>("Validation Problem!", validation);
 
             var author = _mapper.Map<Author>(authorDto);
             var data = await _authorRepository.AddAsync(author);
-            return ResultService.Ok<ReadAuthorDto>(_mapper.Map<ReadAuthorDto>(data));
+            return ResultService.Ok<ReadAuthorResponseDto>(_mapper.Map<ReadAuthorResponseDto>(data));
         }
 
         public async Task<ResultService> DeleteAsync(int Id)
@@ -44,35 +45,35 @@ namespace Application.Services
             return ResultService.Ok($"Author from Id:{Id} was deleted!");
         }
 
-        public async Task<ResultService<ICollection<ReadAuthorDto>>> GetAsync()
+        public async Task<ResultService<ICollection<ReadAuthorResponseDto>>> GetAsync()
         {
             var author = await _authorRepository.GetAllAsync();
-            return ResultService.Ok<ICollection<ReadAuthorDto>>(_mapper.Map<ICollection<ReadAuthorDto>>(author));
+            return ResultService.Ok<ICollection<ReadAuthorResponseDto>>(_mapper.Map<ICollection<ReadAuthorResponseDto>>(author));
         }
 
-        public async Task<ResultService<ReadAuthorDto>> GetByIdAsync(int Id)
+        public async Task<ResultService<ReadAuthorResponseDto>> GetByIdAsync(int Id)
         {
             var author = await _authorRepository.GetAsync(Id);
             if (author == null)
-                return ResultService.Fail<ReadAuthorDto>("Author not found!");
+                return ResultService.Fail<ReadAuthorResponseDto>("Author not found!");
 
-            return ResultService.Ok<ReadAuthorDto>(_mapper.Map<ReadAuthorDto>(author));
+            return ResultService.Ok<ReadAuthorResponseDto>(_mapper.Map<ReadAuthorResponseDto>(author));
         }
 
-        public async Task<ResultService> UpdateAsync(UpdateAuthorDto authorDto)
+        public async Task<ResultService> UpdateAsync(UpdateAuthorRequestDto authorDto)
         {
             if (authorDto == null)
-                return ResultService.Fail<ReadAuthorDto>("The Object is null!");
+                return ResultService.Fail<ReadAuthorResponseDto>("The Object is null!");
 
-            //var validation = new AtuhorDtoValidator.Validate(authorDto);
-            //if (!validation.IsValid)
-            //    return ResultService.RequestError<ReadAuthorDto>("Validation Problem!",result);
+            var validation = new UpdateAuthorRequestDtoValidator().Validate(authorDto);
+            if (!validation.IsValid)
+                return ResultService.RequestError("Validation Problem!", validation);
 
             var author = await _authorRepository.GetAsync(authorDto.Id);
             if (author == null)
                 return ResultService.Fail("Author not found!");
 
-            author = _mapper.Map<UpdateAuthorDto, Author>(authorDto, author);
+            author = _mapper.Map<UpdateAuthorRequestDto, Author>(authorDto, author);
             await _authorRepository.UpdateAsync(author);
             return ResultService.Ok("Author updated!");
         }

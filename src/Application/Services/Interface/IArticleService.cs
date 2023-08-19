@@ -1,18 +1,14 @@
-﻿using Application.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Application.Dtos.Request;
+using Application.Dtos.Response;
 
 namespace Application.Services.Interface
 {
     public interface IArticleService
     {
-        Task<ResultService<ReadArticleDto>> CreateAsync(CreateArticleDto ArticleDto);
-        Task<ResultService<ICollection<ReadArticleDto>>> GetAsync();
-        Task<ResultService<ReadArticleDto>> GetByIdAsync(int Id);
-        Task<ResultService> UpdateAsync(UpdateArticleDto articleDto);
+        Task<ResultService<ReadArticleResponseDto>> CreateAsync(CreateArticleRequestDto ArticleDto);
+        Task<ResultService<ICollection<ReadArticleResponseDto>>> GetAsync();
+        Task<ResultService<ReadArticleResponseDto>> GetByIdAsync(int Id);
+        Task<ResultService> UpdateAsync(UpdateArticleRequestDto articleDto);
         Task<ResultService> DeleteAsync(int Id);
     }
 }

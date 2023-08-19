@@ -1,6 +1,7 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Request;
 using AutoMapper;
 using Domain.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Mappers
 {
@@ -11,24 +12,31 @@ namespace Application.Mappers
             MappingArticle();
             MappingAuthor();
             MappingCategory();
+            MappingUser();
         }
 
         private void MappingArticle()
         {
-            CreateMap<CreateArticleDto, Article>();
-            CreateMap<UpdateArticleDto, Article>();
+            CreateMap<CreateArticleRequestDto, Article>();
+            CreateMap<UpdateArticleRequestDto, Article>();
         }
 
         private void MappingAuthor()
         {
-            CreateMap<CreateAuthorDto, Author>();
-            CreateMap<UpdateAuthorDto, Author>();
+            CreateMap<CreateAuthorRequestDto, Author>();
+            CreateMap<UpdateAuthorRequestDto, Author>();
         }
 
         private void MappingCategory()
         {
-            CreateMap<CreateCategoryDto, Category>();
-            CreateMap<UpdateCategoryDto, Category>();
+            CreateMap<CreateCategoryRequestDto, Category>();
+            CreateMap<UpdateCategoryRequestDto, Category>();
+        }
+
+        private void MappingUser()
+        {
+            CreateMap<UserSignUpRequestDto,IdentityUser>();
+            CreateMap<UserLoginRequestDto,IdentityUser> ();
         }
     }
 }

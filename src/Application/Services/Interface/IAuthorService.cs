@@ -1,13 +1,14 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Request;
+using Application.Dtos.Response;
 
 namespace Application.Services.Interface
 {
     public interface IAuthorService
     {
-        Task<ResultService<ReadAuthorDto>> CreateAuthorAsync(CreateAuthorDto authorDto);
-        Task<ResultService<ICollection<ReadAuthorDto>>> GetAsync();
-        Task<ResultService<ReadAuthorDto>> GetByIdAsync(int Id);
-        Task<ResultService> UpdateAsync(UpdateAuthorDto authorDto);
+        Task<ResultService<ReadAuthorResponseDto>> CreateAuthorAsync(CreateAuthorRequestDto authorDto);
+        Task<ResultService<ICollection<ReadAuthorResponseDto>>> GetAsync();
+        Task<ResultService<ReadAuthorResponseDto>> GetByIdAsync(int Id);
+        Task<ResultService> UpdateAsync(UpdateAuthorRequestDto authorDto);
         Task<ResultService> DeleteAsync(int Id);
     }
 }

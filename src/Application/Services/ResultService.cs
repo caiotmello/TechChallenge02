@@ -1,4 +1,5 @@
 ﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Services
 {
@@ -25,6 +26,26 @@ namespace Application.Services
                 IsSuccess = false,
                 Message = message,
                 Errors = validationResult.Errors.Select(x => new ErrorValidation { Field = x.PropertyName, Message = x.ErrorMessage }).ToList()
+            };
+        }
+
+        public static ResultService RequestError(string message, IdentityResult validationResult)
+        {
+            return new ResultService
+            {
+                IsSuccess = false,
+                Message = message,
+                Errors = validationResult.Errors.Select(x => new ErrorValidation { Field = x.Code, Message = x.Description }).ToList()
+            };
+        }
+
+        public static ResultService<T> RequestError<T>(string message, IdentityResult validationResult)
+        {
+            return new ResultService<T>
+            {
+                IsSuccess = false,
+                Message = message,
+                Errors = validationResult.Errors.Select(x => new ErrorValidation { Field = x.Code, Message = x.Description }).ToList()
             };
         }
 

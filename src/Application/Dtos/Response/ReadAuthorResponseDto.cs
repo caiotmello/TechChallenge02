@@ -1,6 +1,6 @@
-﻿namespace Application.Dtos
+﻿namespace Application.Dtos.Response
 {
-    public class ReadAuthorDto
+    public class ReadAuthorResponseDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

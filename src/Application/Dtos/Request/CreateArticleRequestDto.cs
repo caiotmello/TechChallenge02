@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Application.Dtos
+﻿namespace Application.Dtos.Request
 {
-    public class CreateArticleDto
+    public class CreateArticleRequestDto
     {
         public string Title { get; set; }
         public string Content { get; set; }

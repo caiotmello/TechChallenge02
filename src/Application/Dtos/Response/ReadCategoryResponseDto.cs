@@ -1,6 +1,6 @@
-﻿namespace Application.Dtos
+﻿namespace Application.Dtos.Response
 {
-    public class ReadCategoryDto
+    public class ReadCategoryResponseDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -1,13 +1,15 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Request;
 using Application.Services;
 using Application.Services.Interface;
 using Domain.Validations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ArticleController : ControllerBase
     {
         private readonly IArticleService _articleService;
@@ -18,7 +20,7 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] CreateArticleDto articleDto)
+        public async Task<IActionResult> AddAsync([FromBody] CreateArticleRequestDto articleDto)
         {
             try
             {
@@ -58,7 +60,7 @@ namespace Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody] UpdateArticleDto articleDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateArticleRequestDto articleDto)
         {
             var result = await _articleService.UpdateAsync(articleDto);
             if(result.IsSuccess) 

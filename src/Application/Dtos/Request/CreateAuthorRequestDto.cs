@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.Dtos
+namespace Application.Dtos.Request
 {
-    public class CreateAuthorDto
+    public class CreateAuthorRequestDto
     {
-        [Required(ErrorMessage = "Field Name is mandatory")]
         public string Name { get; set; }
         public string Email { get; set; }
     }

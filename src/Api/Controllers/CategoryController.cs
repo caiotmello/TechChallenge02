@@ -1,13 +1,15 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Request;
 using Application.Services;
 using Application.Services.Interface;
 using Domain.Validations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -18,7 +20,7 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] CreateCategoryDto categoryDto)
+        public async Task<IActionResult> AddAsync([FromBody] CreateCategoryRequestDto categoryDto)
         {
             try
             {
@@ -58,7 +60,7 @@ namespace Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody] UpdateCategoryDto categoryDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateCategoryRequestDto categoryDto)
         {
             var result = await _categoryService.UpdateAsync(categoryDto);
             if (result.IsSuccess)

@@ -1,10 +1,11 @@
-﻿using FluentValidation;
+﻿using Application.Dtos.Request;
+using FluentValidation;
 
 namespace Application.Dtos.Validations
 {
-    public class UpdateArticleDtoValidator : AbstractValidator<UpdateArticleDto>
+    public class UpdateArticleRequestDtoValidator : AbstractValidator<UpdateArticleRequestDto>
     {
-        public UpdateArticleDtoValidator()
+        public UpdateArticleRequestDtoValidator()
         {
             RuleFor(x => x.Id)
                 .NotEmpty()

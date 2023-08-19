@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.Dtos
+namespace Application.Dtos.Request
 {
-    public class CreateCategoryDto
+    public class CreateCategoryRequestDto
     {
-        [Required(ErrorMessage = "Field Name is mandatory")]
         public string Name { get; set; }
-
         public string Description { get; set; }
 
     }

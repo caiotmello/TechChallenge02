@@ -1,13 +1,14 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Request;
+using Application.Dtos.Response;
 
 namespace Application.Services.Interface
 {
     public interface ICategoryService
     {
-        Task<ResultService<ReadCategoryDto>> CreateCategoryAsync(CreateCategoryDto categoryDto);
-        Task<ResultService<ICollection<ReadCategoryDto>>> GetAsync();
-        Task<ResultService<ReadCategoryDto>> GetByIdAsync(int Id);
-        Task<ResultService> UpdateAsync(UpdateCategoryDto categoryDto);
+        Task<ResultService<ReadCategoryResponseDto>> CreateCategoryAsync(CreateCategoryRequestDto categoryDto);
+        Task<ResultService<ICollection<ReadCategoryResponseDto>>> GetAsync();
+        Task<ResultService<ReadCategoryResponseDto>> GetByIdAsync(int Id);
+        Task<ResultService> UpdateAsync(UpdateCategoryRequestDto categoryDto);
         Task<ResultService> DeleteAsync(int Id);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Request;
+using Application.Dtos.Response;
 using Application.Services.Interface;
 using AutoMapper;
 using Domain.Interfaces.Repositories;
@@ -17,10 +18,10 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ResultService<ReadCategoryDto>> CreateCategoryAsync(CreateCategoryDto categoryDto)
+        public async Task<ResultService<ReadCategoryResponseDto>> CreateCategoryAsync(CreateCategoryRequestDto categoryDto)
         {
             if (categoryDto == null)
-                return ResultService.Fail<ReadCategoryDto>("The Object is null");
+                return ResultService.Fail<ReadCategoryResponseDto>("The Object is null");
 
             //var result = new CategoryDtoValidator.Validate(categoryDto);
             //if (!result.IsValid)
@@ -28,7 +29,7 @@ namespace Application.Services
 
             var category = _mapper.Map<Category>(categoryDto);
             var data = await _categoryRepository.AddAsync(category);
-            return ResultService.Ok<ReadCategoryDto>(_mapper.Map<ReadCategoryDto>(data));
+            return ResultService.Ok<ReadCategoryResponseDto>(_mapper.Map<ReadCategoryResponseDto>(data));
         }
 
         public async Task<ResultService> DeleteAsync(int Id)
@@ -41,26 +42,26 @@ namespace Application.Services
             return ResultService.Ok($"Category from Id:{Id} was deleted!");
         }
 
-        public async Task<ResultService<ICollection<ReadCategoryDto>>> GetAsync()
+        public async Task<ResultService<ICollection<ReadCategoryResponseDto>>> GetAsync()
         {
             var category = await _categoryRepository.GetAllAsync();
-            return ResultService.Ok<ICollection<ReadCategoryDto>>(_mapper.Map<ICollection<ReadCategoryDto>>(category));
+            return ResultService.Ok<ICollection<ReadCategoryResponseDto>>(_mapper.Map<ICollection<ReadCategoryResponseDto>>(category));
         }
 
-        public async Task<ResultService<ReadCategoryDto>> GetByIdAsync(int Id)
+        public async Task<ResultService<ReadCategoryResponseDto>> GetByIdAsync(int Id)
         {
             var category = await _categoryRepository.GetAsync(Id);
             if (category == null)
-                return ResultService.Fail<ReadCategoryDto>("Category not found!");
+                return ResultService.Fail<ReadCategoryResponseDto>("Category not found!");
 
-            return ResultService.Ok<ReadCategoryDto>(_mapper.Map<ReadCategoryDto>(category));
+            return ResultService.Ok<ReadCategoryResponseDto>(_mapper.Map<ReadCategoryResponseDto>(category));
         }
 
-        public async Task<ResultService> UpdateAsync(UpdateCategoryDto categoryDto)
+        public async Task<ResultService> UpdateAsync(UpdateCategoryRequestDto categoryDto)
         {
 
             if (categoryDto == null)
-                return ResultService.Fail<ReadCategoryDto>("The Object is null!");
+                return ResultService.Fail<ReadCategoryResponseDto>("The Object is null!");
 
             //var validation = new CategoryDtoValidator.Validate(categoryDto);
             //if (!validation.IsValid)
@@ -70,7 +71,7 @@ namespace Application.Services
             if (category == null)
                 return ResultService.Fail("Category not found!");
 
-            category = _mapper.Map<UpdateCategoryDto, Category>(categoryDto, category);
+            category = _mapper.Map<UpdateCategoryRequestDto, Category>(categoryDto, category);
             await _categoryRepository.UpdateAsync(category);
             return ResultService.Ok("Category updated!");
         }

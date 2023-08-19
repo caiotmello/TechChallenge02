@@ -1,14 +1,16 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Request;
 using Application.Services;
 using Application.Services.Interface;
 using Domain.Validations;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AuthorController : ControllerBase
     {
         private readonly IAuthorService _authorService;
@@ -19,7 +21,7 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] CreateAuthorDto auhtorDto)
+        public async Task<IActionResult> AddAsync([FromBody] CreateAuthorRequestDto auhtorDto)
         {
             try
             {
@@ -59,7 +61,7 @@ namespace Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody] UpdateAuthorDto authorDto)
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateAuthorRequestDto authorDto)
         {
             var result = await _authorService.UpdateAsync(authorDto);
             if (result.IsSuccess)
