@@ -24,6 +24,6 @@ jobs:
         
     - name: Build e Push no Azure Container Registry
       run: |
-        docker build . --file src/Dockerfile --tag ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:latest
+        docker build . --file Dockerfile --tag ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:latest
         docker tag ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:latest ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:$(date +%s)
         docker push ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi
