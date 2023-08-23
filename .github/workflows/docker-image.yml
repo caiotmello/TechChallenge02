@@ -22,8 +22,12 @@ jobs:
         password: ${{secrets.DOCKER_PASSWORD}}
         login-server: ${{secrets.DOCKER_CONTAINER_REGISTRY}}
         
-    - name: Build e Push no Azure Container Registry
-      run: |
-        docker build . --file Dockerfile --tag ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:latest
-        docker tag ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:latest ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:$(date +%s)
-        docker push ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v4.1.1
+      with:
+        context: ./
+        file: ./Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/techchallenge02:v${{date + %s}}
+          ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/techchallenge02:latest
