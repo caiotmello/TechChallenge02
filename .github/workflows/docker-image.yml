@@ -29,5 +29,5 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-          ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/techchallenge02:v$(date +%s)
+          ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/techchallenge02:v${{ github.run_number }}
           ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/techchallenge02:latest
