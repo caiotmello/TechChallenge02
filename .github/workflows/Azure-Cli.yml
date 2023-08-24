@@ -19,8 +19,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Run Azure CLI Command
-      uses: azure/CLI@v1
+      uses: azure/CLI@v1.0.8
       with:
-        azcliversion: 2.28.0
         inlineScript: |
           az group create --name myResourceGroup --location eastus
