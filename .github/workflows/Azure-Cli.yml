@@ -1,0 +1,26 @@
+name: Azure CLI Workflow
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  run-azure-cli:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Run Azure CLI Command
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.28.0
+        inlineScript: |
+          az group create --name myResourceGroup --location eastus
