@@ -1,5 +1,4 @@
 name: CI/CD Process
-
 on:
   push:
     branches: [ "master" ]
@@ -29,6 +28,7 @@ jobs:
           ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/${{secrets.DOCKER_USERNAME}}/techchallenge02:latest
 
   deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
