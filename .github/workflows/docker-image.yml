@@ -1,17 +1,12 @@
-name: Docker Image CI
-
+name: CI/CD Process
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  workflow_dispatch:
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     
@@ -22,8 +17,35 @@ jobs:
         password: ${{secrets.DOCKER_PASSWORD}}
         login-server: ${{secrets.DOCKER_CONTAINER_REGISTRY}}
         
-    - name: Build e Push no Azure Container Registry
-      run: |
-        docker build . --file src/Api/Dockerfile --tag ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:latest
-        docker tag ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:latest ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi:$(date +%s)
-        docker push ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/newsapi
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v4.1.1
+      with:
+        context: ./
+        file: ./Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/${{secrets.DOCKER_USERNAME}}/techchallenge02:v${{ github.run_number }}
+          ${{ secrets.DOCKER_CONTAINER_REGISTRY }}/${{secrets.DOCKER_USERNAME}}/techchallenge02:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Azure
+        uses: azure/login@v1.4.6
+        with:
+            creds: ${{ secrets.AZURE_CREDENTIALS }}
+            
+      - name: Azure WebApp
+        uses: Azure/webapps-deploy@v2.2.10
+        with:
+          # Name of the Azure Web App
+          app-name: 'techchallenge02'
+          # Applies to Web Apps(Windows and Linux) and Web App Containers(linux). Multi container scenario not supported. Publish profile (*.publishsettings) file contents with Web Deploy secrets
+          slot-name: 'production'
+          # Applies to Web App Containers only: Specify the fully qualified container image(s) name. For example, 'myregistry.azurecr.io/nginx:latest' or 'python:3.7.2-alpine/'. For multi-container scenario multiple container image names can be provided (multi-line separated)
+          images: '${{ secrets.DOCKER_CONTAINER_REGISTRY }}/${{secrets.DOCKER_USERNAME}}/techchallenge02:latest'
+          # Enter the resource group name of the web app
+          resource-group-name: 'rg_techchallenge02'
+  
