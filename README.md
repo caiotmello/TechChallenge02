@@ -1,83 +1,157 @@
 # TechChallenge02 - API Blog de notícias com Onion Architecture
 
-O Tech Challenge 01 engloba o desenvolvimento de uma aplicação web com acesso ao banco de dados SQL Server Azure e ao Azure blob storage. O projeto em si contém uma aplicação Web desenvolvida em ASP.NET MVC servindo o front e backend da aplicação, na qual, fará a comunicação com o banco de dados e blob. Na aplicação Web é possível
-adicionar imagens que serão armazenadas no Azure blob Storage e suas referencias (URL e Nome) serão guardados no banco de dados SQL Azure.
+O Tech Challenge 02 engloba o desenvolvimento de API web para um blog de notícias utilizando Onion Architecture com autenticação/autorização através do identity framework. O projeto em si contém uma aplicação Web API desenvolvida em ASP.NET 7 , na qual, é responsável por toda a lógica da aplicação e comunicação com o banco de dados. O projeto também conta com um pipeline de integração e entrega contínua (CI/CD) no Github Actions, de modo de automatizar o processo de implantação de ponta a ponta.
 
+Abaixo é possível verificar a arquitetura da Applicação no Azure:
 
-Abaixo é possível verificar a arquitetura da Applicação
+![TechChallenge02 Arquitetura](docs/Architecture.png)
 
-![ImageUploaderMVC Arquitetura](Documents/Arquitetura.drawio.png)
+O projeto contem um Container Web App que é alimentado por um instância de uma imagem gerada a partir do build da aplicação contida nesse repositório através do continuos integration. A imagem pode ser obtita a partir do link `cmellorepository.azurecr.io/cmellorepository/techchallenge02:latest` que está amarzenada em um Container Register do Azure.
 
+A Web App também é conectada com o Azure SQL para armazenar os dados da API como os artigos, categorias, autores e usuários. Podendo assim, fazer todos o controle de usuários e artigos do sistema.
 
-Para conexão com o banco de dados foi utilizado Entity Framework Core e desenvolvido um CRUD com Repository pattern + unityOfWork pattern. Design do banco de dados:
+Para conexão com o banco de dados foi utilizado Entity Framework Core e desenvolvido o CRUD com Repository pattern que pode ser encontrado sua implementação na camada de Infraestrutura. Design do banco de dados:
 
-![ImageUploaderMVC Banco de Dados](Documents/BancoDeDados.drawio.png)
+![TechChallenge02 Banco de Dados](docs/EntityAndDBArchitecture.png)
 
+O banco de dados conta com as tabelas descritas acima mais as tabelas geradas para o controle de autenticação e autorização de usuáridos do IDENTITY Framework.
 
- ## Aplicação rodando
- 
-O Projeto ImageUpload se parece com a figura seguinte:
+## Padrão Utilizado
 
-![ImageUploaderMVC home page screenshot](Documents/HomeView.png)
+Confome dito acima, foi utilizado o padrão de arquitetura cebola também chamada de arquitetura limpa. A arquitetura "cebola" é um conceito de design para sistemas de software que enfatiza camadas de abstração e isolamento. Inspirada em uma cebola com várias camadas, cada camada representa um nível de funcionalidade e depende das camadas internas para funcionar. Isso promove a modularidade, reusabilidade e manutenção do sistema, permitindo que cada camada se concentre em uma responsabilidade específica. Uma jeito comum de visualizar essa arquitetura é através de uma série de circulos concentricos similares a uma cebola conforme pode ser visto na imagem abaixo :
 
-Na página inicial, o usuário verá a lista de todas as imagens guardas no blob store e algumas de suas propriedades como Nome, Descrição e URL.
-Nesta página é permitido adicionar, deletar, modificar e ver detalhes de uma determinada imagem.
+![TechChallenge02 Banco de Dados](docs/OnionArchitecture.png)
 
-Caso o usuário queira adicionar uma imagem basta selecionar o botão CREATE e colocar todos os dados requeridos conforme a imagem abaixo:
+Portanto a estrutura do projeto ficou dividdo conforme demonstrado a baixo:
 
-![ImageUploaderMVC Create page screenshot](Documents/CreateView.png)
+    ```
+    |--docs - Documentação e diagramas
+    |--src
+      |-- Api - A camada de interface do usuário e comunicação externa. Ela recebe solicitações e fornece respostas, atuando como ponto de entrada para interações com o sistema.
+      |-- Application - A camada de interface do usuário e comunicação externa. Ela recebe solicitações e fornece respostas, atuando como ponto de entrada para interações com o sistema.
+      |-- Domain - A camada de domínio encapsula as regras centrais e a lógica de negócios da aplicação. Ela modela os conceitos fundamentais e as relações do problema que a aplicação está resolvendo.
+      |-- Infrastructure.Data - Responsável pelo acesso e gerenciamento dos dados da aplicação. Isso inclui interações com bancos de dados, armazenamento de informações e operações relacionadas.
+      |-- Infrastructure.Identity - Lida com aspectos de autenticação e autorização dos usuários. É responsável por gerenciar a identidade dos usuários e suas permissões.
+      |-- Infrastructure.Ioc - Esta camada se refere à inversão de controle (IoC) e à configuração de dependências. Ela controla como as diferentes partes do sistema se conectam e interagem, promovendo a flexibilidade e a manutenção.
+    ```
 
+## Aplicação
+
+O Projeto não possue front end, sendo assim, foi disponibilizado somente os endpoint para comunicação através de alguma ferramente de mercado que faça requisições HTTP ou swagger.
+São disponibilizados 4 endpoints na api: Article, Author, Category e User, sendo que para utilizar os três primeiros endpoints é necessário estar autenticado na API com JWT.
+Então para qualquer requisição que for feita nesses três endpoints (Article,Author e Category) é necessário enviar no header da requisição um Bearer Token que será disponibilizado ao autenticar o usuário no endpoint `/api/User/Login`.
+
+Para fazer o cadastro de um artigo é necessário antes de criado pelo menos um autor e categoria para ser enviada na requisição.
+
+### URL de Acesso
+
+Para testar a API sem ter que criar toda a infraestrutura, estou disponibilizando as URLs de acesso temporariamente nos links abaixo:
+
+1. URL `https://techchallenge02.azurewebsites.net/api/<Colocar_final_endpoint>` para acesso com Postman , etc.
+2. URL `https://techchallenge02.azurewebsites.net/swagger/index.html` para acesso via Swagger.
+
+### Métodos
+
+Requisições para a API devem seguir os padrões:
+| Método | Descrição |
+|---|---|
+| `GET` | Retorna informações de um ou mais registros. |
+| `POST` | Utilizado para criar um novo registro. |
+| `PUT` | Atualiza dados de um registro ou altera sua situação. |
+| `DELETE` | Remove um registro do sistema. |
+
+### Respostas
+
+| Código | Descrição                                                          |
+| ------ | ------------------------------------------------------------------ |
+| `200`  | Requisição executada com sucesso (success).                        |
+| `400`  | Erros de validação ou os campos informados não existem no sistema. |
+| `401`  | Usuário não autorizado.                                            |
+| `500`  | EndPoint não encontrado,                                           |
+
+### Controller [/User]
+
+Reponsável pelo controle de usuário e autenticação da API. Nele é onde será feito a criação do usuário e recebimento do token para autenticação nos outros endpoints.
+
+| Método | URL               | Descrição         | Parâmetros [JSON]                   | Retorno |
+| ------ | ----------------- | ----------------- | ----------------------------------- | ------- |
+| `POST` | [api/User/signUp] | Cadastra usuário. | email,password,passwordConfirmation | ------- |
+| `POST` | [api/User/login]  | Loga o usuário.   | email, password                     | Token   |
+
+### Controller Article
+
+Responsável pelo controle de artigos da API. Esse endpoint deve ser utilizado somente depois de estar autenticado e e deve ser passado no header da requisição o token do usuário.
+OBS: Deve ser criado antes ao menos um autor e uma categoria para ser passada de parámetro.
+
+| Método   | URL                | Descrição                             | Parâmetros [JSON]                 | Retorno          |
+| -------- | ------------------ | ------------------------------------- | --------------------------------- | ---------------- |
+| `POST`   | [api/Article]      | Cadastra um novo artigo.              | title,content,authorId,categoryId | ---------------- |
+| `GET`    | [api/Article]      | Retorna todos os usuários.            | --------------------------------- | Lista de artigos |
+| `GET`    | [api/Article/{id}] | Retorna o artigo informado na URL.    | --------------------------------- | Artigo           |
+| `PUT`    | [api/Article]      | Atualiza alguma informação do artigo. | id,title,content                  | ---------------- |
+| `DELETE` | [api/Article/{id}] | Delete o artigo informado na URL.     | --------------------------------- | ---------------- |
+
+### Controler Author
+
+Responsável pelo controle de autores da API. Esse endpoint deve ser utilizado somente depois de estar autenticado e deve ser passado no header da requisição o token do usuário.
+
+| Método   | URL               | Descrição                            | Parâmetros [JSON] | Retorno          |
+| -------- | ----------------- | ------------------------------------ | ----------------- | ---------------- |
+| `POST`   | [api/Auhtor]      | Cadastra um novo autor.              | name,email        | ---------------- |
+| `GET`    | [api/Author]      | Retorna todos os usuários.           | ----------------- | Lista de autores |
+| `GET`    | [api/Author/{id}] | Retorna o autor informado na URL.    | ----------------- | Autor            |
+| `PUT`    | [api/Author]      | Atualiza alguma informação do autor. | id,name,email     | ---------------- |
+| `DELETE` | [api/Author/{id}] | Delete o autor informado na URL.     | ----------------- | ---------------- |
+
+### Controller Category
+
+Responsável pelo controle de categorias da API. Esse endpoint deve ser utilizado somente depois de estar autenticado e deve ser passado no header da requisição o token do usuário.
+
+| Método   | URL                 | Descrição                                | Parâmetros [JSON]   | Retorno            |
+| -------- | ------------------- | ---------------------------------------- | ------------------- | ------------------ |
+| `POST`   | [api/Category]      | Cadastra um novo categoria.              | name,description    | ----------------   |
+| `GET`    | [api/Category]      | Retorna todas as categorias.             | ------------------- | Lista de categoria |
+| `GET`    | [api/Category/{id}] | Retorna a categoria informado na URL.    | ------------------- | Categoria          |
+| `PUT`    | [api/Category]      | Atualiza alguma informação da categoria. | id,name,description | ----------------   |
+| `DELETE` | [api/Category/{id}] | Delete a categoria informado na URL.     | ------------------- | ----------------   |
 
 ## Pré-Requisitos
-1. .NET6
 
-## Configuração do Azure
-1. Para configurar a infraestrutura do Azure (BlobStorage, SQL Server Azure e WebApp) foi criado dois scripts .bat para serem rodados.
-1. Primeiramente, O script `DeployAzureInfra.bat` é responsável por criar toda a infraestrutura no azure para a aplicação rodar. Porém antes de executa-ló, é necessário alterar alguns parâmetros de configuração das infrastruturas criadas no Azure como por exemplo o nome do \_Resosurce Group, DatabaseName, ServerName, WebServiceName\_ de acordo com sua necessidade.
-    - `<RESOURCE_GROUP_NAME>` = Nome do Resource group
-    - `<STORAGE_ACCOUNT_NAME>` = Nome do Storage account (Dever ser nome exlcusivo).
-    - `<SERVER_NAME>` = Nome do servidor para a gerencia do banco de dados (Dever ser nome exlcusivo).
-    - `<DATABASE_NAME>` = Nome do banco de dados
-    - `<LOGIN>` = Usuário para conexão com o banco de dados.
-    - `<PASSWORD>` = Senha para conexão com o banco de dados. Deve conter letra maiúscula, minúscula, número e caracter especial.
-    - `<APP_SERVICE_PLAN_NAME>` = Nome do service plan.
-    - `<WEBAPP_NAME>` = Nome do WebApp (Dever ser nome exlcusivo).
+1. .NET7
 
-1. Após alterar os parâmetros, rode o script `DeployAzureInfra.bat`, na qual será a responsável por criar toda a infraestrutura no azure para a aplicação rodar.
+Execute os próximos passos somente se for criar uma infraestrutura nova ou rodar a aplicação localmente no seu PC.
 
-1. Caso não haja nenhum erro, será necessário atualizar as Connection Strings em `appsettings.json`.
-    Substitua o parâmetro `<SQL_DB_AZURE_CONNECTION_STRING>` pela sua connection string do SQL Azure DB.
-    ```
-    "ConnectionStrings": {
-      "SqlConnection": "<SQL_DB_AZURE_CONNECTION_STRING>"
-    },
-    ```
-    
-    Depois, Substitua o parâmetro `<BLOB_STORAGE_AZURE_CONNECTION_STRING>`
-    ```
-    "AzureStorage": {
-      "ConnectionString": "<BLOB_STORAGE_AZURE_CONNECTION_STRING>",
-      "ContainerName": "image-container"
-    }
-    ```
-    __NOTA__: Verificar se o blob container foi criado no azure. Caso negativo verificar capítulo (Erros Comuns). 
+### Configuração do Infraestrutura
 
-## Upload da aplicação no Azure
-1. Para fazer o upload da aplicação da aplicação no WebApp do Azure primeiramente é necessário alterar os parâmetros de acordo com o já configurado no azure
-    - `<RESOURCE_GROUP_NAME>` = Nome do Resource group (Mesmo configurado no script `DeployAzureInfra.bat`).
-    - `<WEBAPP_NAME>` = Nome do WebApp (Mesmo configurado no script `DeployAzureInfra.bat`).
+1. Necessário criar manualmente um WebApp for Container no Azure.
+2. Criar um Azure SQL para criação do banco de dados.
 
-1. Agora, basta rodar o script `DeployApplication.bat`.
+### Configuração SQL Server
 
-    __NOTA__: Caso ocorra o erro seguinte durante o carregamento da aplicação no webapp. 
-    ```
-    HTTPSConnectionPool(host='caiomello-techchallenge01.scm.azurewebsites.net', port=443): Max retries exceeded with url: /api/zipdeploy?isAsync=true (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:997)')))
-    ```
-    Pode ser que seu computador está atrás de um firewall corporativo o proxy corporativo. Com isso pode ocorrer uma falha de conexão SSL durante a checagem do certificado.
-    Para Bypassar esse erro, a seguinte variavel de ambiemte pode ser adionada no computar `AZURE_CLI_DISABLE_CONNECTION_VERIFICATION=1`.
-    
-2. Caso tudo ocorra bem, a aplicação já estará disponível para conexão no endereço disponível no Azure WebApp.
+1. Verifique se sua connection string in `Api/appsetting.json` aponta para o seu banco de dados.
+   ```
+     "ConnectionStrings": {
+        "SqlConnection": "<SQL_DB_AZURE_CONNECTION_STRING>"
+      },
+   ```
+2. Verifique se EF Tool já está instalado.
+   ```
+   dotnet tool update --global dotnet-ef
+   ```
+3. Abra um prompt de comando na pasta Api e execute os seguintes comandos:
 
+   ```
+   dotnet restore
+   dotnet tool restore
+   dotnet ef database update -c AppDbContext -p ../Infrastructure.Data/Infrastructure.Data.csproj -s Api.csproj
+   dotnet ef database update -c IdentityDataContext -p ../Infrastructure.Identity/Infrastructure.Identity.csproj -s Api.csproj
+
+   ```
+
+   Esses comandos irão criar um banco de dados no SQL com as tabelas utilizadas no projeto.
+
+## CI/CD
+
+1.
 
 ## Erros Conhecidos
-1. Blob Container não é criado -> Caso o container "image-container" não for criado automaticamente pela aplicação. Será necessário fazer a criação do mesmo manualmente no site do azure com o nome `image-container`.
