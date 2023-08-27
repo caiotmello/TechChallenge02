@@ -16,13 +16,13 @@ Para conexão com o banco de dados foi utilizado Entity Framework Core e desenvo
 
 O banco de dados conta com as tabelas descritas acima mais as tabelas geradas para o controle de autenticação e autorização de usuáridos do IDENTITY Framework.
 
-## Padrão Utilizado
+## Arquitetura padrão utilizada
 
 Confome dito acima, foi utilizado o padrão de arquitetura cebola também chamada de arquitetura limpa. A arquitetura "cebola" é um conceito de design para sistemas de software que enfatiza camadas de abstração e isolamento. Inspirada em uma cebola com várias camadas, cada camada representa um nível de funcionalidade e depende das camadas internas para funcionar. Isso promove a modularidade, reusabilidade e manutenção do sistema, permitindo que cada camada se concentre em uma responsabilidade específica. Uma jeito comum de visualizar essa arquitetura é através de uma série de circulos concentricos similares a uma cebola conforme pode ser visto na imagem abaixo :
 
 ![TechChallenge02 Banco de Dados](docs/OnionArchitecture.png)
 
-Portanto a estrutura do projeto ficou dividdo conforme demonstrado a baixo:
+Por tanto a estrutura do projeto ficou dividido conforme demonstrado abaixo:
 
     ```
     |--docs - Documentação e diagramas
@@ -34,6 +34,19 @@ Portanto a estrutura do projeto ficou dividdo conforme demonstrado a baixo:
       |-- Infrastructure.Identity - Lida com aspectos de autenticação e autorização dos usuários. É responsável por gerenciar a identidade dos usuários e suas permissões.
       |-- Infrastructure.Ioc - Esta camada se refere à inversão de controle (IoC) e à configuração de dependências. Ela controla como as diferentes partes do sistema se conectam e interagem, promovendo a flexibilidade e a manutenção.
     ```
+
+## CI/CD
+
+Esse projeto possui um pipeline de integração e entrega continua (CI/CD) com gitbuh action , de modo de automatizar o processo. O fluxo desse processo pode ser visto na imagem abaixo:
+
+![TechChallenge02 Banco de Dados](docs/ContinuosIntegrationProcess.png)
+
+1. O desenvolver faz um push para o repositório do github na branch master.
+2. O pipeline do GitHub Actions é iniciado.
+3. Inicia-se o processo de build do projeto e após o termino é criado uma imagem de container com o resultado do build.
+4. Essa nova imagem é carregada no Azure Container Register.
+5. Com a nova imagem no ACR, é feito o deploy da mesma em um Web Web For Container.
+6. API atualizada é disponibilizada para o usuário.
 
 ## Aplicação
 
@@ -149,9 +162,5 @@ Execute os próximos passos somente se for criar uma infraestrutura nova ou roda
    ```
 
    Esses comandos irão criar um banco de dados no SQL com as tabelas utilizadas no projeto.
-
-## CI/CD
-
-1.
 
 ## Erros Conhecidos
