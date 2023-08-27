@@ -41,12 +41,12 @@ Esse projeto possui um pipeline de integração e entrega continua (CI/CD) com g
 
 ![TechChallenge02 Banco de Dados](docs/ContinuosIntegrationProcess.png)
 
-1. O desenvolver faz um push para o repositório do github na branch master.
+1. O desenvolvedor faz um push para o repositório do github na branch master.
 2. O pipeline do GitHub Actions é iniciado.
 3. Inicia-se o processo de build do projeto e após o termino é criado uma imagem de container com o resultado do build.
 4. Essa nova imagem é carregada no Azure Container Register.
 5. Com a nova imagem no ACR, é feito o deploy da mesma em um Web Web For Container.
-6. API atualizada é disponibilizada para o usuário.
+6. API atualizada e disponibilizada para o usuário.
 
 ## Aplicação
 
